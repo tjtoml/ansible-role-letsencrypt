@@ -1,0 +1,14 @@
+---
+- name: Enable the backports repository
+  apt_repository:
+    repo: 'deb http://ftp.debian.org/debian jessie-backports main'
+    state: present
+    update_cache: true
+
+
+- name: Install certbot
+  apt:
+    name: certbot
+    default_release: jessie-backports
+    state: present
+# vim:ft=ansible:

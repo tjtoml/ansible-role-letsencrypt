@@ -1,0 +1,11 @@
+---
+- name: Install EPEL repository
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install certbot
+  yum:
+    name: certbot
+    state: present
+# vim:ft=ansible:
