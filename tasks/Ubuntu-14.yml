@@ -1,0 +1,16 @@
+---
+- name: Add certbot ppa
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+
+- name: Install prerequisite packages
+  package:
+    name: software-properties-common
+    state: present
+
+- name: Install certbot
+  package:
+    name: certbot
+    state: latest
+
+# vim:ft=ansible:
