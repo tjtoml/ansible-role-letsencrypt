@@ -1,0 +1,33 @@
+---
+- name: Enable the backports repository
+  apt_repository:
+    repo: 'deb http://ftp.debian.org/debian wheezy-backports main'
+    state: present
+    update_cache: true
+
+
+- name: create directory for certbot to live in
+  file:
+    path: /opt/certbot
+    owner: root
+    group: root
+    mode: 0700
+    state: directory
+
+- name: download certbot
+  command: "wget https://dl.eff.org/certbot-auto"
+  args:
+    chdir: /opt/certbot/
+    creates: /opt/certbot/certbot-auto
+    warn: false
+
+- name: Make certbot-auto executable
+  file:
+    path: /opt/certbot/certbot-auto
+    mode: 0700
+
+- name: First run of certbot-auto - takes a while
+  command: "/opt/certbot/certbot-auto --os-packages-only --quiet"
+  
+  
+# vim:ft=ansible:
