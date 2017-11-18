@@ -7,11 +7,17 @@
     mode: 0700
     state: directory
 
+- name: Install EPEL repository
+  yum:
+    name: epel-release
+    state: present
+
 - name: download certbot
   command: "wget https://dl.eff.org/certbot-auto"
   args:
     chdir: /opt/certbot/
     creates: /opt/certbot/certbot-auto
+    warn: false
 
 - name: Make certbot-auto executable
   file:
@@ -19,7 +25,7 @@
     mode: 0700
 
 - name: First run of certbot-auto - takes a while
-  command: "/opt/certbot/certbot-auto --os-packages-only"
+  command: "/opt/certbot/certbot-auto --os-packages-only -q"
   
   
 # vim:ft=ansible:
