@@ -4,6 +4,15 @@
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
 
+- name: Get installed repos
+  shell: subscription-manager repos --list-enabled
+  register: enabled_repos
+  changed_when: false
+
+- name: Enable RHEL 7 Server Optional RPMs
+  command: subscription-manager repos --enable rhel-7-server-optional-rpms
+  when: enabled_repos.stdout.find('rhel-7-server-optional-rpms') == -1
+
 - name: Install certbot
   yum:
     name: certbot

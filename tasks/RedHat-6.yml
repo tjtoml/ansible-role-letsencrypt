@@ -1,31 +1,49 @@
 ---
-- name: create directory for certbot to live in
-  file:
-    path: /opt/certbot
-    owner: root
-    group: root
-    mode: 0700
-    state: directory
-
-- name: Install EPEL repository
+- name: Enable the EPEL repository
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
     state: present
 
+- name: Install wget
+  yum:
+    name: wget
+    state: present
+
+- name: Get installed repos
+  shell: subscription-manager repos --list-enabled
+  register: enabled_repos
+  changed_when: false
+
+- debug: msg={{ enabled_repos.stdout.find('rhel-6-server-optional-rpms') }}
+
+- name: Enable RHEL 6 Server Optional RPMs
+  command: subscription-manager repos --enable rhel-6-server-optional-rpms
+  when: enabled_repos.stdout.find('rhel-6-server-optional-rpms') == -1
+
 - name: download certbot
   command: "wget https://dl.eff.org/certbot-auto"
   args:
-    chdir: /opt/certbot/
-    creates: /opt/certbot/certbot-auto
+    chdir: /usr/local/sbin
+    creates: /usr/local/sbin/certbot-auto
     warn: false
 
 - name: Make certbot-auto executable
   file:
-    path: /opt/certbot/certbot-auto
+    path: /usr/local/sbin/certbot-auto
     mode: 0700
 
+- name: Create symlink from certbot-auto to certbot
+  file:
+    src: /usr/local/sbin/certbot-auto
+    dest: /usr/local/sbin/certbot
+    owner: root
+    group: root
+    state: link
+
 - name: First run of certbot-auto - takes a while
-  command: "/opt/certbot/certbot-auto --os-packages-only -q"
-  
+  shell: "certbot --os-packages-only --quiet; certbot"
+  failed_when: false
+  args:
+    creates: "/opt/eff.org/certbot/venv/bin/python"
   
 # vim:ft=ansible:
