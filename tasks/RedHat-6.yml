@@ -14,8 +14,6 @@
   register: enabled_repos
   changed_when: false
 
-- debug: msg={{ enabled_repos.stdout.find('rhel-6-server-optional-rpms') }}
-
 - name: Enable RHEL 6 Server Optional RPMs
   command: subscription-manager repos --enable rhel-6-server-optional-rpms
   when: enabled_repos.stdout.find('rhel-6-server-optional-rpms') == -1
