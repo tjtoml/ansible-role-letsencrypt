@@ -42,6 +42,7 @@ galaxy_info:
   - name: Debian
     versions:
     - wheezy
+    - stretch  
     - jessie
   galaxy_tags:
     - ssl
