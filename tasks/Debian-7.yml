@@ -5,7 +5,6 @@
     state: present
     update_cache: true
 
-
 - name: create directory for certbot to live in
   file:
     path: /opt/certbot
@@ -17,17 +16,26 @@
 - name: download certbot
   command: "wget https://dl.eff.org/certbot-auto"
   args:
-    chdir: /opt/certbot/
-    creates: /opt/certbot/certbot-auto
+    chdir: /usr/local/sbin
+    creates: /usr/local/sbin/certbot-auto
     warn: false
 
 - name: Make certbot-auto executable
   file:
-    path: /opt/certbot/certbot-auto
+    path: /usr/local/sbin/certbot-auto
     mode: 0700
 
+- name: Create symlink from certbot-auto to certbot
+  file:
+    src: /usr/local/sbin/certbot-auto
+    dest: /usr/local/sbin/certbot
+    owner: root
+    group: root
+    state: link
+
 - name: First run of certbot-auto - takes a while
-  command: "/opt/certbot/certbot-auto --os-packages-only --quiet"
-  
+  command: "certbot --os-packages-only --quiet"
+  args:
+    creates: "/opt/eff.org/certbot/venv/bin/python"
   
 # vim:ft=ansible:
